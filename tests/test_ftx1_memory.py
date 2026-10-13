@@ -54,9 +54,8 @@ async def test_actual_profile_and_public_memory_tag_reader(radio):
 async def test_radio_rejects_or_does_not_reply_no_fabricated_memory(radio):
     for frame in ("?;", "MR", "MR00002" + _MR[7:-1]):
         radio._transport.query.return_value = frame
-        with pytest.raises((ValueError, Exception)) as exc:
+        with pytest.raises(ValueError):
             await radio.get_memory_channel(1)
-        assert exc.value is not None
     radio._transport.write.assert_not_awaited()
 
 
