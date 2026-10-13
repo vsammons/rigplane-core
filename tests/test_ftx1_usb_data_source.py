@@ -26,7 +26,10 @@ def radio() -> YaesuCatRadio:
 @pytest.mark.asyncio
 async def test_real_ftx1_usb_data_menu_readback(radio):
     for code, expected in [
-        ("0", "MIC"), ("1", "USB"), ("2", "Bluetooth"), ("3", "AUTO")
+        ("0", "MIC"),
+        ("1", "USB"),
+        ("2", "Bluetooth"),
+        ("3", "AUTO"),
     ]:
         radio._transport.query.return_value = f"EX010413{code}"
         assert await radio.get_data_mod_source() == expected
@@ -59,8 +62,9 @@ async def test_no_success_claim_after_unconfirmed_write(radio):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("bad", ["?;", "", "EX0104134", "EX0104141",
-                                  "EX010413", "MD0C", "EX01041311"])
+@pytest.mark.parametrize(
+    "bad", ["?;", "", "EX0104134", "EX0104141", "EX010413", "MD0C", "EX01041311"]
+)
 async def test_unknown_or_rejected_response_fails_closed_without_write(radio, bad):
     radio._transport.query.return_value = bad.rstrip(";")
     with pytest.raises(Exception):
