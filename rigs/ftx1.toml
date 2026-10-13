@@ -1282,6 +1282,13 @@ values = [0, 1]
 labels = { "0" = "OFF", "1" = "ON" }
 
 [commands]
+# FTX-1 read-only memory observation, Yaesu CAT 2508-C pp. 19-21.
+# MR's declared parse structure carries the fixed P9=00 bytes; MT names
+# are variable-length ASCII and decoded by the existing transport owner.
+# No MC/MW/AM/BM write, memory recall, or PTT capability is implied.
+get_memory_channel = { cat = { read = "MR{chan};", parse = "MR{chan}{freq:09d}{sign}{offset:04d}{rx}{tx}{mode}{state}{tone}00{shift};" } }
+get_memory_tag = { cat = { read = "MT{chan};" } }
+
 # ── Frequency / Mode ──
 get_freq       = { cat = { read = "FA;", parse = "FA{freq:09d};" } }
 set_freq       = { cat = { write = "FA{freq:09d};" } }
