@@ -1471,6 +1471,45 @@ class YaesuCatRadio:
         else:
             logger.warning("set_data_mode: no CAT command defined for %s", self.model)
 
+    # -- FTX-1 USB DATA transmit-audio selection (EX010413) ---------------
+
+    async def get_data_mod_source(self) -> str:
+        """Read RADIO SETTING -> MODE DATA -> MOD SOURCE from the real rig.
+
+        Yaesu FTX-1 CAT 2508-C, EX010413; response EX010413P4;
+        P4: 0=MIC, 1=USB, 2=Bluetooth, 3=AUTO.
+        Selecting DATA-U mode (MD0C/MD1C) alone does NOT establish
+        this independent physical modulation source.
+        """
+        if self.model != "FTX-1":
+            raise CommandError("FTX-1 MODE DATA modulation-source query only")
+        fields = await self._query("get_data_mod_source")
+        code = fields.get("source")
+        labels = {"0": "MIC", "1": "USB", "2": "Bluetooth", "3": "AUTO"}
+        if code not in labels:
+            raise CommandError(f"unrecognized FTX-1 MODE DATA source: {code!r}")
+        return labels[code]
+
+    async def ensure_data_mod_source_usb(self) -> str:
+        """Ensure USB DATA input is selected with mandatory CAT readback.
+
+        Does not change the operating mode, PTT, microphone/SSB audio,
+        PRESET slots, CAT baud or other menu items. Caller must hold
+        the existing serialized owner and require verified PTT OFF;
+        no autonomous mode switch or transmission is performed here.
+        """
+        if self.model != "FTX-1":
+            raise CommandError("USB DATA source selection requires FTX-1")
+        previous = await self.get_data_mod_source()
+        if previous != "USB":
+            await self._write("set_data_mod_source", source="1")
+        actual = await self.get_data_mod_source()
+        if actual != "USB":
+            raise CommandError(
+                f"FTX-1 MODE DATA MOD SOURCE write not confirmed: {actual!r}"
+            )
+        return actual
+
     # -- Power switch (PS) -------------------------------------------------
 
     async def get_powerstat(self) -> bool:
