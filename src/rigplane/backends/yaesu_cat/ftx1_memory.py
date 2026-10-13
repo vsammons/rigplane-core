@@ -3,6 +3,7 @@
 Authority: Yaesu FTX-1 CAT Operation Reference Manual 2508-C pp. 19-21.
 Read-only MR and MT only. No serial owner, writes, memory recall, or PTT.
 """
+
 from __future__ import annotations
 
 import re
@@ -107,10 +108,10 @@ async def read_ftx1_memory(radio: Any, channel: int) -> Ftx1MemoryRecord:
     # Reconstruct the exact response from the parser's typed fields so the
     # same strict validations apply to both the fake and real transport.
     raw = (
-        f'MR{fields["chan"]}{fields["freq"]:09d}'
-        f'{fields["sign"]}{fields["offset"]:04d}'
-        f'{fields["rx"]}{fields["tx"]}{fields["mode"]}'
-        f'{fields["state"]}{fields["tone"]}00{fields["shift"]};'
+        f"MR{fields['chan']}{fields['freq']:09d}"
+        f"{fields['sign']}{fields['offset']:04d}"
+        f"{fields['rx']}{fields['tx']}{fields['mode']}"
+        f"{fields['state']}{fields['tone']}00{fields['shift']};"
     )
     return parse_ftx1_memory_reply(raw, channel=channel)
 
