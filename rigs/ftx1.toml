@@ -1295,7 +1295,7 @@ set_mode_sub   = { cat = { write = "MD1{mode};" } }
 # FTX-1 manufacturer's RADIO SETTING / MODE DATA / MOD SOURCE menu:
 # CAT manual 2508-C EX P1=01 P2=04 P3=13; P4=1 is USB.
 # This is independent of MD0C (DATA-U) and of the PRESET1 EX09 menu.
-get_data_mod_source = { cat = { read = "EX010413;", parse = "EX010413{source};" } }
+get_data_mod_source = { cat = { read = "EX010413;", parse = "EX010413{src};" } }
 set_data_mod_source = { cat = { write = "EX010413{source};" } }
 
 
