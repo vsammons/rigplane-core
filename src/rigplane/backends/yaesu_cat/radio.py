@@ -1484,7 +1484,7 @@ class YaesuCatRadio:
         if self.model != "FTX-1":
             raise CommandError("FTX-1 MODE DATA modulation-source query only")
         fields = await self._query("get_data_mod_source")
-        code = fields.get("source")
+        code = fields.get("src")
         labels = {"0": "MIC", "1": "USB", "2": "Bluetooth", "3": "AUTO"}
         if code not in labels:
             raise CommandError(f"unrecognized FTX-1 MODE DATA source: {code!r}")
@@ -1502,7 +1502,7 @@ class YaesuCatRadio:
             raise CommandError("USB DATA source selection requires FTX-1")
         previous = await self.get_data_mod_source()
         if previous != "USB":
-            await self._write("set_data_mod_source", source="1")
+            await self._write("set_data_mod_source", src="1")
         actual = await self.get_data_mod_source()
         if actual != "USB":
             raise CommandError(
