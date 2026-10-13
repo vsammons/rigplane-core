@@ -58,6 +58,7 @@ if TYPE_CHECKING:
     from ...profiles.rig_loader import RigConfig
     from ...types import BandStackRegister, MemoryChannel
     from .poller import YaesuCatPoller
+    from .ftx1_memory import Ftx1MemoryRecord
 
 __all__ = ["YaesuCatRadio"]
 
@@ -3835,7 +3836,27 @@ class YaesuCatRadio:
         """
         await self._write("vfo_equalize")
 
-    # -- Memory (not supported on Yaesu) ----------------------------------------
+    # -- FTX-1 native memory observations ------------------------------------
+
+    async def get_memory_channel(self, channel: int) -> "Ftx1MemoryRecord":
+        """Read one ordinary FTX-1 memory through the existing CAT owner.
+
+        A missing or empty memory returns no fabricated channel values;
+        the underlying MR query raises on a radio rejection or timeout.
+        Memory write and recall are intentionally not enabled.
+        """
+        from .ftx1_memory import read_ftx1_memory
+
+        return await read_ftx1_memory(self, channel)
+
+    async def get_memory_tag(self, channel: int) -> str:
+        """Read a channel name (MT); never writes or opens a second port."""
+        from .ftx1_memory import read_ftx1_memory_tag
+
+        self._require_connected()
+        return await read_ftx1_memory_tag(self, channel)
+
+    # -- Legacy memory mutations (still unsupported on Yaesu) -----------------
 
     async def set_memory_mode(self, channel: int) -> None:
         raise NotImplementedError("Memory mode not supported on this radio")
