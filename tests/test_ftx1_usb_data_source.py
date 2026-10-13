@@ -88,6 +88,6 @@ async def test_malformed_query_cannot_be_interpreted_as_usb(radio):
 def test_profile_is_explicit_and_separate_from_operating_mode(radio):
     cmds = radio._config.commands
     assert cmds["get_data_mod_source"].read == "EX010413;"
-    assert cmds["set_data_mod_source"].write == "EX010413{source};"
+    assert cmds["set_data_mod_source"].write == "EX010413{src};"
     assert cmds["get_mode"].read == "MD0;"
     assert cmds["set_mode"].write == "MD0{mode};"
