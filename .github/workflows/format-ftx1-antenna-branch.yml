@@ -1,0 +1,26 @@
+name: Format FTX-1 antenna branch source
+on:
+  push:
+    branches: [feat/ftx1-usb-data-ant2-20261014]
+    paths:
+      - '.github/workflows/format-ftx1-antenna-branch.yml'
+permissions: {contents: write}
+jobs:
+  format_candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: true
+      - name: Ruff format ONLY current branch's two changed Python source files
+        run: |
+          python -m pip install ruff==0.15.2
+          ruff format src/rigplane/backends/yaesu_cat/radio.py tests/test_ftx1_hf_antenna.py
+          ruff check src/rigplane/backends/yaesu_cat/radio.py tests/test_ftx1_hf_antenna.py
+          git add -- src/rigplane/backends/yaesu_cat/radio.py tests/test_ftx1_hf_antenna.py
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "style(ftx1): ruff format native HF antenna CAT branch only"
+            git push origin HEAD:feat/ftx1-usb-data-ant2-20261014
+          fi
