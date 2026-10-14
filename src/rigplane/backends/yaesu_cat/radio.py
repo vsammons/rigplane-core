@@ -1376,6 +1376,54 @@ class YaesuCatRadio:
         else:
             self._state.sub.mode = mode
 
+    # -- FTX-1 optima HF ANT1/ANT2 (EX030704) ------------------------------
+
+    async def get_hf_antenna(self) -> int:
+        """Read the optima HF/50 MHz antenna connector, 0=ANT1, 1=ANT2.
+
+        CAT 2508-C Table 3 / Yaesu Advanced Manual 2506-B p76.
+        Radio antenna selection and external ESP32 switch routing are
+        separate physical systems. This method never changes TX or PTT.
+        """
+        if self.model != "FTX-1":
+            raise CommandError("HF ANT selector applies only to FTX-1")
+        reply = await self._query("get_hf_antenna")
+        val = reply.get("ant")
+        if val not in ("0", "1"):
+            raise CommandError("FTX-1 HF ANT source readback unrecognized")
+        return int(val)
+
+    async def set_hf_antenna(self, antenna: int) -> None:
+        """Write only the manufacturer's EX030704P4 menu item (no PTT).
+
+        Authorization, physical RX state, band, split and TX lease checks
+        must be performed by the single owning VSS provider before calling.
+        """
+        if self.model != "FTX-1" or type(antenna) is not int or antenna not in (0, 1):
+            raise CommandError("FTX-1 HF ANT must be integer 0 (ANT1) or 1 (ANT2)")
+        await self._write("set_hf_antenna", ant=str(antenna))
+
+    async def get_hf_antenna_tuner_type(self, antenna: int) -> int:
+        """Read EX030701 or EX030702 tuner type for the selected antenna."""
+        if self.model != "FTX-1" or type(antenna) is not int or antenna not in (0, 1):
+            raise CommandError("FTX-1 antenna index must be 0 or 1")
+        command = "get_tuner_type_ant1" if antenna == 0 else "get_tuner_type_ant2"
+        result = await self._query(command)
+        typ = result.get("type")
+        if typ not in ("0","1","2","3"):
+            raise CommandError("FTX-1 antenna tuner type readback invalid")
+        return int(typ)
+
+    async def get_ant2_operation(self) -> int:
+        """Read ANT2 OPERATION EX030703. 0=TRX, 1/2 split TX/RX routing."""
+        if self.model != "FTX-1":
+            raise CommandError("ANT2 OPERATION applies only to FTX-1")
+        reply = await self._query("get_ant2_operation")
+        operation = reply.get("operation")
+        if operation not in ("0","1","2"):
+            raise CommandError("FTX-1 ANT2 operation mode readback invalid")
+        return int(operation)
+
     # -- FTX-1 USB DATA transmit-audio selection (EX010413) ---------------
 
     async def get_data_mod_source(self) -> str:
