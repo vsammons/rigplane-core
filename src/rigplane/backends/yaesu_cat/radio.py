@@ -1388,7 +1388,7 @@ class YaesuCatRadio:
         if self.model != "FTX-1":
             raise CommandError("HF ANT selector applies only to FTX-1")
         reply = await self._query("get_hf_antenna")
-        val = reply.get("ant")
+        val = reply.get("src")
         if val not in ("0", "1"):
             raise CommandError("FTX-1 HF ANT source readback unrecognized")
         return int(val)
@@ -1401,7 +1401,7 @@ class YaesuCatRadio:
         """
         if self.model != "FTX-1" or type(antenna) is not int or antenna not in (0, 1):
             raise CommandError("FTX-1 HF ANT must be integer 0 (ANT1) or 1 (ANT2)")
-        await self._write("set_hf_antenna", ant=str(antenna))
+        await self._write("set_hf_antenna", src=str(antenna))
 
     async def get_hf_antenna_tuner_type(self, antenna: int) -> int:
         """Read EX030701 or EX030702 tuner type for the selected antenna."""
@@ -1409,7 +1409,7 @@ class YaesuCatRadio:
             raise CommandError("FTX-1 antenna index must be 0 or 1")
         command = "get_tuner_type_ant1" if antenna == 0 else "get_tuner_type_ant2"
         result = await self._query(command)
-        typ = result.get("type")
+        typ = result.get("src")
         if typ not in ("0","1","2","3"):
             raise CommandError("FTX-1 antenna tuner type readback invalid")
         return int(typ)
@@ -1419,7 +1419,7 @@ class YaesuCatRadio:
         if self.model != "FTX-1":
             raise CommandError("ANT2 OPERATION applies only to FTX-1")
         reply = await self._query("get_ant2_operation")
-        operation = reply.get("operation")
+        operation = reply.get("src")
         if operation not in ("0","1","2"):
             raise CommandError("FTX-1 ANT2 operation mode readback invalid")
         return int(operation)
