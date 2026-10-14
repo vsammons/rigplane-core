@@ -1410,7 +1410,7 @@ class YaesuCatRadio:
         command = "get_tuner_type_ant1" if antenna == 0 else "get_tuner_type_ant2"
         result = await self._query(command)
         typ = result.get("src")
-        if typ not in ("0","1","2","3"):
+        if typ not in ("0", "1", "2", "3"):
             raise CommandError("FTX-1 antenna tuner type readback invalid")
         return int(typ)
 
@@ -1420,7 +1420,7 @@ class YaesuCatRadio:
             raise CommandError("ANT2 OPERATION applies only to FTX-1")
         reply = await self._query("get_ant2_operation")
         operation = reply.get("src")
-        if operation not in ("0","1","2"):
+        if operation not in ("0", "1", "2"):
             raise CommandError("FTX-1 ANT2 operation mode readback invalid")
         return int(operation)
 
