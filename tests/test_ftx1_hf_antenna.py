@@ -61,7 +61,7 @@ async def test_failed_cat_read_never_succeeds(radio):
 def test_profile_enumerates_exact_yaesu_commands(radio):
     c=radio._config.commands
     assert c["get_hf_antenna"].read=="EX030704;"
-    assert c["set_hf_antenna"].write=="EX030704{ant};"
+    assert c["set_hf_antenna"].write=="EX030704{src};"
     assert c["get_tuner_type_ant1"].read=="EX030701;"
     assert c["get_tuner_type_ant2"].read=="EX030702;"
     assert c["get_ant2_operation"].read=="EX030703;"
