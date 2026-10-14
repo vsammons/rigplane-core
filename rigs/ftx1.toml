@@ -1297,11 +1297,11 @@ set_mode_sub   = { cat = { write = "MD1{mode};" } }
 # This is independent of MD0C (DATA-U) and of the PRESET1 EX09 menu.
 # FTX-1 optima OPERATION SETTING > OPTION, Yaesu CAT 2508-C Table 3.
 # Select and read the *radio's* HF ANT1/ANT2 port, not any ESP32 external relay.
-get_hf_antenna = { cat = { read = "EX030704;", parse = "EX030704{ant};" } }
-set_hf_antenna = { cat = { write = "EX030704{ant};" } }
-get_tuner_type_ant1 = { cat = { read = "EX030701;", parse = "EX030701{type};" } }
-get_tuner_type_ant2 = { cat = { read = "EX030702;", parse = "EX030702{type};" } }
-get_ant2_operation = { cat = { read = "EX030703;", parse = "EX030703{operation};" } }
+get_hf_antenna = { cat = { read = "EX030704;", parse = "EX030704{src};" } }
+set_hf_antenna = { cat = { write = "EX030704{src};" } }
+get_tuner_type_ant1 = { cat = { read = "EX030701;", parse = "EX030701{src};" } }
+get_tuner_type_ant2 = { cat = { read = "EX030702;", parse = "EX030702{src};" } }
+get_ant2_operation = { cat = { read = "EX030703;", parse = "EX030703{src};" } }
 
 get_data_mod_source = { cat = { read = "EX010413;", parse = "EX010413{src};" } }
 set_data_mod_source = { cat = { write = "EX010413{src};" } }
